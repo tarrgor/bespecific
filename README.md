@@ -41,8 +41,12 @@ Skills read and write project state here (created automatically on first use):
 
 ## How to use it
 
-Skills live in a plain top-level `skills/` folder rather than `.claude/skills/`, so Claude Code won't auto-discover them as slash commands. Instead, just tell Claude what you want in plain language — e.g. *"kick off this project"*, *"implement issue #12"*, *"let's have a project meeting"* — and point it at the relevant `skills/<name>/SKILL.md` if it doesn't pick it up on its own.
+Skills live in a plain top-level `skills/` folder rather than `.claude/skills/`, so your agent won't auto-discover them on its own. To make them available, either:
 
-## Contributing skills
+- **Copy** the `skills/<name>/` folders into your agent's skills directory (e.g. `.claude/skills/` for Claude Code), or
+- **Symlink** them there instead, pointing back at this repo — so updates here stay in sync:
+  ```bash
+  ln -s /path/to/bespecific/skills/kick-off .claude/skills/kick-off
+  ```
 
-New skills go in `skills/<name>/SKILL.md`. Per [CLAUDE.md](CLAUDE.md), keep them brief and precise — every sentence should earn its tokens.
+Once available, just tell your agent what you want in plain language — e.g. *"kick off this project"*, *"implement issue #12"*, *"let's have a project meeting"*.
