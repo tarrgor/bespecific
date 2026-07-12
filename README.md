@@ -24,6 +24,7 @@ project-meeting  ◄────────────  merge-pr  ◄───
 5. **check-pr-comments** — triages review feedback on an already-implemented issue and fixes what's valid.
 6. **merge-pr** — merges an approved PR back into `develop` and cleans up the branch.
 7. **project-meeting** — a recurring status meeting: reviews open findings, reports on finished work, and plans what's next — always with your confirmation before anything is decided.
+8. **generate-branding** — standalone, on demand: produces or refreshes a brand identity guide and visual assets in `.project/Branding/`. Independent of the loop above — run it whenever you want branding created or updated.
 
 ## The `.project/` directory
 
@@ -37,7 +38,8 @@ Skills read and write project state here (created automatically on first use):
 | `Inbox/` | Findings surfaced during implementation, awaiting discussion |
 | `Archive/` | Resolved findings and past meeting records |
 | `Knowledge/` | Durable learnings, organized by topic |
-| `Branding/Assets/` | Brand and design assets |
+| `Branding/BRAND.md` | Brand identity guide: palette, typography, voice & tone |
+| `Branding/Assets/` | Generated logo, icon, and marketing assets (or creative briefs) |
 
 ## How to use it
 
