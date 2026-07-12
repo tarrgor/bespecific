@@ -27,6 +27,7 @@ Follow this workflow end to end. Keep the user informed at important transitions
 
 - Read any project instruction file (`CLAUDE.md`, `AGENTS.md`) and the relevant code/tests before acting.
 - GitHub: fetch title, body, labels, linked context, and all comments (`gh issue view <number> --comments`). Markdown ticket: read the file in full.
+- If the issue touches UI, styling, or any brand-facing output, also read `.project/Branding/BRAND.md` and `.project/Branding/Assets/`, if present, and implement against them (palette, typography, voice, logo/asset usage) — don't invent brand decisions the guide already made.
 - Restate the acceptance criteria internally; do not implement from the title alone.
 - If something genuinely blocks a correct implementation (not resolvable from the codebase or convention), post one concise comment on the issue (or flag it to the user for a markdown ticket) explaining the ambiguity, then stop and wait. Resume once answered.
 

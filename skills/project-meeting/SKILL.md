@@ -5,7 +5,7 @@ description: This skill should be used to run a recurring project status meeting
 
 # Project Meeting
 
-Moderates a recurring project status meeting. Every decision is made with the user, one at a time — no action without explicit confirmation.
+Moderates a recurring project status meeting — does not touch code. Every decision is made with the user, one at a time — no action without explicit confirmation.
 
 ## 1. Determine what's new since the last meeting
 

@@ -17,6 +17,7 @@ Addresses review feedback on an issue that's already implemented — does not re
 
 - Read the original issue/ticket in full — its acceptance criteria are the triage checklist.
 - Fetch the feedback: GitHub — all PR comments and unresolved review threads (`gh pr view <number> --comments`); no GitHub — `.project/Reports/review-<slug>.md` or other feedback the user points to.
+- If the feedback concerns UI, styling, or any brand-facing output, also read `.project/Branding/BRAND.md`, if present, and fix against it — don't invent brand decisions the guide already made.
 
 ## 3. Triage and fix
 
