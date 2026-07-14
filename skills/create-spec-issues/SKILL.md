@@ -11,9 +11,12 @@ Runs after kick-off produces a confirmed spec. Decomposes it into one issue per 
 
 Use the highest-numbered `.project/SPEC-milestone-<###>-*.md` if any exist, else `.project/SPEC.md`. Read it thoroughly — if a milestone spec is in play, also skim `.project/SPEC.md` for project vision and constraints not repeated in the milestone spec.
 
-## 2. Check for GitHub
+## 2. Require GitHub
 
-Run `gh repo view` (requires a GitHub remote and `gh auth status` to succeed). If it succeeds, GitHub issues are available and preferred. Otherwise fall back to markdown files.
+Run `gh repo view` (requires a GitHub remote and a working `gh auth status`). Issues live on GitHub — there is no offline fallback.
+
+- No GitHub repo yet: tell the user, and offer to create one (`gh repo create`) — ask for name and visibility, and only run it once they confirm.
+- `gh` missing or unauthenticated: say exactly what's missing and stop.
 
 ## 3. Decompose into units of work
 
@@ -25,8 +28,7 @@ For each unit of work, first check `.project/Reports/` for a completion report m
 
 Otherwise, each issue is a detailed, specific implementation prompt an AI coding agent could execute directly — not a summary. Include: what to build, the relevant context/constraints from the spec, and a bullet list of clear, checkable acceptance criteria.
 
-- GitHub available: `gh issue create --title "..." --body "..."`.
-- GitHub unavailable: write one `.project/Tickets/ISSUE-<slug>.md` per issue, same content structure.
+Create each with `gh issue create --title "..." --body "..."`.
 
 ## 5. Verify completeness
 

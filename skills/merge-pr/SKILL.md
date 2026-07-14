@@ -1,11 +1,13 @@
 ---
 name: merge-pr
-description: This skill should be used to merge an open, reviewed pull request back into develop, identified by its issue number or PR number. Trigger phrases include "merge PR #12", "merge this PR", "merge issue #12", "land this branch", or whenever an approved implementation is ready to merge.
+description: This skill should be used to merge an open, reviewed pull request back into its base branch, identified by its issue number or PR number. Trigger phrases include "merge PR #12", "merge this PR", "merge issue #12", "land this branch", or whenever an approved implementation is ready to merge.
 ---
 
 # Merge PR
 
-Merges an approved PR into `develop` and cleans up the branch — does not review or implement anything.
+Merges an approved PR into its base branch and cleans up the branch — does not review or implement anything.
+
+The base branch is whatever the PR targets: `develop` where the project has one, otherwise the default branch (typically `main`). Read it off the PR (`gh pr view <number> --json baseRefName`) rather than assuming.
 
 ## 1. Identify the PR
 
@@ -14,7 +16,7 @@ Merges an approved PR into `develop` and cleans up the branch — does not revie
 
 ## 2. Verify it's ready
 
-- Confirm the PR is open, targets `develop`, has no unresolved review threads, and has no failing required checks (`gh pr checks <number>`).
+- Confirm the PR is open, targets the expected base branch, has no unresolved review threads, and has no failing required checks (`gh pr checks <number>`).
 - If blocked — failing CI, unresolved comments, merge conflicts — stop and report the blocker instead of force-merging.
 
 ## 3. Merge and delete the branch
@@ -25,11 +27,11 @@ Merges an approved PR into `develop` and cleans up the branch — does not revie
 ## 4. Clean up locally
 
 ```bash
-git switch develop
+git switch <base>
 git branch -d issue/<slug>
 git pull --ff-only
 ```
 
 ## 5. Report
 
-Confirm the merge, the branch deletion (remote and local), and that `develop` is up to date. Note the issue this closed.
+Confirm the merge, the branch deletion (remote and local), and that the base branch is up to date. Note the issue this closed.

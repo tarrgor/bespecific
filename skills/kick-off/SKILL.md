@@ -9,15 +9,23 @@ Runs on an empty/near-empty project directory (new project) or to scope a new mi
 
 ## 1. Set up project files
 
-- Create if missing: `.project/Inbox/`, `.project/Archive/`, `.project/Tickets/`, `.project/Knowledge/`, `.project/Branding/Assets/`, `.project/Reports/`.
+- Create if missing: `.project/Inbox/`, `.project/Archive/`, `.project/Knowledge/`, `.project/Branding/Assets/`, `.project/Reports/`.
 - Create if missing: root `CLAUDE.md`, copied verbatim from this skill's `references/CLAUDE.md.template`; and root `AGENTS.md` containing just `Read CLAUDE.md.`. Never overwrite either if it already exists.
 - If a codebase exists, read the README, manifests, source layout, `.project/SPEC.md`, and any `.project/SPEC-milestone-*.md` first. Anything discoverable this way is a **fact** — never ask the user for it.
 
-## 2. Map the decision tree
+## 2. Require GitHub
+
+The whole workflow runs on GitHub issues and PRs — there is no offline fallback.
+
+- Verify with `gh repo view` (needs a GitHub remote and a working `gh auth status`).
+- Fails because the project has no GitHub repo: tell the user, and offer to create one (`gh repo create`) — ask for visibility and name, and only run it once they confirm.
+- Fails because `gh` isn't installed or authenticated: tell the user exactly what's missing and stop; don't work around it.
+
+## 3. Map the decision tree
 
 Sketch the decision branches this plan touches — problem/goal, target users, scope (in/out), core workflows, data model, architecture/stack, integrations, non-functional requirements, milestone plan, risks — scoped to what's actually relevant, expanding into sub-branches as answers reveal dependencies.
 
-## 3. Interview one question at a time
+## 4. Interview one question at a time
 
 - One question per turn; wait for the answer before asking the next.
 - Propose a recommended answer with a short rationale for every question.
@@ -25,11 +33,11 @@ Sketch the decision branches this plan touches — problem/goal, target users, s
 - Resolve branches in dependency order — don't ask about something whose answer depends on an unresolved earlier decision.
 - Keep going until every relevant branch is resolved, not just until "enough."
 
-## 4. Confirm before writing
+## 5. Confirm before writing
 
 Summarize the full plan. Do not write anything until the user explicitly confirms it's correct and complete.
 
-## 5. Write the spec
+## 6. Write the spec
 
 - `.project/SPEC.md` holds only the project vision: problem/goal, target users, architecture/stack, non-functional requirements, long-term roadmap. It changes rarely — later changes are amendments, not rewrites.
 - `.project/SPEC-milestone-<###>-<slug>.md` holds one milestone's concrete detail: scope (in/out), workflows, data model, acceptance-level detail. Number sequentially, zero-padded to 3 digits (`001`, `002`, ...) — find the highest existing `SPEC-milestone-<###>-*.md` directly under `.project/` and use `+1`, starting at `001`.

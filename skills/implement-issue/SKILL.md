@@ -1,6 +1,6 @@
 ---
 name: implement-issue
-description: This skill should be used to implement a single GitHub issue or `.project/Tickets/ISSUE-<slug>.md` ticket from a fresh, unimplemented state. Trigger phrases include "implement issue #12", "work on this ticket", "fix issue X", "resolve this issue", "implement ISSUE-<slug>.md", or whenever the user wants the full issue-to-PR workflow. If the issue already has a branch/PR, use check-pr-comments instead.
+description: This skill should be used to implement a single GitHub issue from a fresh, unimplemented state. Trigger phrases include "implement issue #12", "work on this ticket", "fix issue X", "resolve this issue", or whenever the user wants the full issue-to-PR workflow. If the issue already has a branch/PR, use check-pr-comments instead.
 ---
 
 # Implement Issue
@@ -9,35 +9,36 @@ Follow this workflow end to end. Keep the user informed at important transitions
 
 ## 1. Identify the issue and check for an existing implementation
 
-- Identify the issue: a GitHub issue number, or a `.project/Tickets/ISSUE-<slug>.md` file. If genuinely unclear, ask.
-- GitHub: search for a PR whose head branch is `issue/<issue-number>-*` (`gh pr list --search "head:issue/<issue-number>-"`). No GitHub: check for an existing local/remote `issue/<slug>` branch.
-- **Found one** — this issue is already implemented. Stop and tell the user to use the `check-pr-comments` skill instead; do not refresh `develop`, create a branch, or touch the existing one.
+- Identify the GitHub issue by number. If genuinely unclear, ask.
+- Search for a PR whose head branch is `issue/<issue-number>-*` (`gh pr list --search "head:issue/<issue-number>-"`).
+- **Found one** — this issue is already implemented. Stop and tell the user to use the `check-pr-comments` skill instead; do not refresh the base branch, create a branch, or touch the existing one.
 - **Found nothing** — continue to Step 2 as a fresh implementation.
 
-## 2. Refresh the base branch
+## 2. Determine and refresh the base branch
 
 - `git fetch` first. Check `git status`, current branch, and remotes. Never discard, stash, or sweep in unrelated user changes without explicit permission — if uncommitted changes make switching branches unsafe, stop and ask.
-- Update `develop` with a fast-forward-only pull:
+- The base branch is `develop` if it exists locally or on the remote; otherwise it's the repository's default branch (`gh repo view --json defaultBranchRef`), typically `main`. Single-branch projects are supported — don't create `develop` yourself.
+- Update it with a fast-forward-only pull:
   ```bash
-  git switch develop
+  git switch <base>
   git pull --ff-only
   ```
 
 ## 3. Review the issue
 
 - Read any project instruction file (`CLAUDE.md`, `AGENTS.md`) and the relevant code/tests before acting.
-- GitHub: fetch title, body, labels, linked context, and all comments (`gh issue view <number> --comments`). Markdown ticket: read the file in full.
+- Fetch the issue's title, body, labels, linked context, and all comments (`gh issue view <number> --comments`).
 - If the issue touches UI, styling, or any brand-facing output, also read `.project/Branding/BRAND.md` and `.project/Branding/Assets/`, if present, and implement against them (palette, typography, voice, logo/asset usage) — don't invent brand decisions the guide already made.
 - Restate the acceptance criteria internally; do not implement from the title alone.
-- If something genuinely blocks a correct implementation (not resolvable from the codebase or convention), post one concise comment on the issue (or flag it to the user for a markdown ticket) explaining the ambiguity, then stop and wait. Resume once answered.
+- If something genuinely blocks a correct implementation (not resolvable from the codebase or convention), post one concise comment on the issue explaining the ambiguity, then stop and wait. Resume once answered.
 
 ## 4. Create the branch
 
-- Branch from the freshly updated `develop` — never from `main`, never using a worktree:
+- Branch from the freshly updated base branch, never using a worktree:
   ```bash
   git switch -c issue/<slug>
   ```
-  `<slug>` is `<issue-number>-<kebab-title>` for GitHub issues, or the ticket's own `<slug>` for markdown tickets.
+  `<slug>` is `<issue-number>-<kebab-title>`.
 - Don't reset or overwrite an existing branch of that name — Step 1 already handles the case where one exists.
 
 ## 5. Implement and verify
@@ -57,13 +58,22 @@ Follow this workflow end to end. Keep the user informed at important transitions
 ## 7. Publish
 
 - Commit only the issue-related changes, with a message referencing the issue.
-- GitHub available: push the branch and open a non-draft PR targeting `develop`, with a summary and the verification commands that passed.
+- Push the branch and open a non-draft PR targeting the base branch from Step 2 (`gh pr create --base <base>`), with a summary and the verification commands that passed.
 - **The PR body must include `Closes #<number>` on its own line** so GitHub auto-closes the issue on merge. Verify this line is present in the created PR before reporting completion — do not rely on a generic PR template to add it.
-- GitHub unavailable: push the branch if a remote exists, otherwise leave it ready locally; note completion back to the user instead of a PR link.
 
 ## 8. Report completion
 
 Write `.project/Reports/<slug>.md` — a short report of what was implemented and how it was verified. `create-spec-issues` checks this directory to skip already-done work.
+
+## 9. Independent review
+
+- Launch the `verify-implementation` agent as a subagent (Agent tool, `subagent_type: verify-implementation`, `run_in_background: false`) so it reviews with its own fresh context. Give it the issue number and the PR number.
+- Wait for it to finish — do not proceed, merge, or report done while it is running.
+
+## 10. Address the review findings
+
+- Findings returned: use the `check-pr-comments` skill on the same issue/PR to triage and fix them, then re-run the project's build/test commands.
+- No findings: say so and stop; do not re-run the review or invent work.
 
 ## Failure handling
 
