@@ -21,10 +21,13 @@ The base branch is whatever the PR targets: `develop` where the project has one,
 
 ## 3. Merge and delete the branch
 
-- `gh pr merge <number> --squash --delete-branch`. Always use the squash merge method.
-- Confirm the remote branch was deleted; if `--delete-branch` didn't remove it, delete it explicitly.
+- Check whether the current directory is a linked git worktree, not the main checkout: `git rev-parse --git-common-dir --git-dir` — if the two paths differ, it's a worktree. (Also visible via `git worktree list`.)
+- **Normal branch (not a worktree):** `gh pr merge <number> --squash --delete-branch`. Always use the squash merge method. Confirm the remote branch was deleted; if `--delete-branch` didn't remove it, delete it explicitly.
+- **Linked worktree:** the local branch is checked out in this worktree and bound to the session — do not delete it and do not switch it. Merge without `--delete-branch` (`gh pr merge <number> --squash`), then delete only the remote branch (`git push origin --delete <branch>`). Leave the local branch and worktree alone.
 
 ## 4. Clean up locally
+
+Only for a normal branch (skip entirely for a linked worktree — no switch, no branch deletion, no pull there):
 
 ```bash
 git switch <base>
@@ -34,7 +37,7 @@ git pull --ff-only
 
 ## 5. Report
 
-Confirm the merge, the branch deletion (remote and local), and that the base branch is up to date. Note the issue this closed.
+Confirm the merge and remote branch deletion. For a normal branch, also confirm the local branch was deleted and the base branch is up to date; for a linked worktree, note that the local branch was left in place. Note the issue this closed.
 
 ## 6. Check the Inbox
 
